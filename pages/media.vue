@@ -53,7 +53,7 @@ interface MediaListType {
 }
 // ...
 function getStreamPath(mediaID: string) {
-    return useRuntimeConfig().public.streamBase + "/" + mediaID
+    return useRuntimeConfig().public.baseStream + "/" + mediaID
 }
 function getDlPath(mediaID: string) {
     return getStreamPath(mediaID) + "?d=true"
@@ -62,7 +62,7 @@ function getMXPath(mediaID: string, fileName: string) {
     return `intent:${getStreamPath(mediaID)}.m3u8#Intent;package=com.mxtech.videoplayer.ad;S.title=${encodeURI(fileName)};S.decode_mode=2;end`
 }
 async function deleteMedia(mediaID: string) {
-    await useAPI(useRuntimeConfig().public.apiBase + '/media/' + mediaID, { method: "DELETE" })
+    await useAPI(useRuntimeConfig().public.baseApi + '/media/' + mediaID, { method: "DELETE" })
     mediaList.value!.Total -= 1
     currentPage.value = Math.min(totalPages.value, currentPage.value)
     await mediaListRef()
@@ -86,12 +86,7 @@ const totalPages = computed(() => {
 const apiQuery = computed(() => {
     return { "page": currentPage.value, "page_size": pageSize }
 })
-const {
-    status,
-    data,
-    token,
-} = useAuth()
-const { data: mediaList, refresh: mediaListRef } = await useAPI<MediaListType>(useRuntimeConfig().public.apiBase + '/media', {
+const { data: mediaList, refresh: mediaListRef } = await useAPI<MediaListType>(useRuntimeConfig().public.baseApi + '/media', {
     query: apiQuery,
     onRequest: () => {
         loadingState.value = true

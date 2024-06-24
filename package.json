@@ -11,7 +11,7 @@
   },
   "dependencies": {
     "@mdi/font": "^7.4.47",
-    "@sidebase/nuxt-auth": "^0.7.2",
+    "@sidebase/nuxt-auth": "0.8.0-alpha.2",
     "nuxt": "^3.12.2",
     "vue": "^3.4.29",
     "vue-router": "^4.3.3"

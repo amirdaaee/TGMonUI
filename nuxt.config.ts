@@ -28,20 +28,26 @@ export default defineNuxtConfig({
       },
     },
   },
-  // ...
-  runtimeConfig: {
-    public: {
-      apiBase: '/api',
-      streamBase: '/stream',
-    }
-  },
-  // ...
+  //... 
   auth: {
     isEnabled: true,
     globalAppMiddleware: true,
-    baseURL: process.env.NUXT_AUTH_BASE ? process.env.NUXT_AUTH_BASE : "/auth",
+    baseURL: process.env.NUXT_AUTH_BASE_URL ? process.env.NUXT_AUTH_BASE_URL : "/auth",
     provider: {
-      type: "local"
+      type: "local",
+      endpoints: {
+        signIn: { path: "login" },
+        getSession: { path: "session" },
+      },
+    },
+  },
+  // ...
+  runtimeConfig: {
+    public: {
+      baseApi: '/api',
+      baseStream: '/stream',
     }
   }
+  // ...
+
 })
