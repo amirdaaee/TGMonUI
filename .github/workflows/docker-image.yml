@@ -42,4 +42,4 @@ jobs:
           push: true
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
-          build-args: NUXT_AUTH_BASE_URL=$NUXT_AUTH_BASE_URL
+          build-args: NUXT_AUTH_BASE_URL= ${{ secrets.NUXT_AUTH_BASE_URL }}
