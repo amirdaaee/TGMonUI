@@ -3,8 +3,10 @@ ARG NODE_VERSION=20.14.0
 FROM node:${NODE_VERSION}-slim as base
 
 ARG PORT=3000
+ARG NUXT_AUTH_BASE_URL
 
 ENV NODE_ENV=production
+ENV NUXT_AUTH_BASE_URL=${NUXT_AUTH_BASE_URL}
 
 WORKDIR /src
 
@@ -19,7 +21,7 @@ COPY . .
 RUN yarn run build
 
 # Run
-FROM base
+FROM base as app
 
 ENV PORT=$PORT
 
