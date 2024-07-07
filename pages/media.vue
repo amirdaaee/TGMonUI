@@ -9,8 +9,11 @@
                                 gradient="to bottom, rgba(0,0,0,.1), rgba(0,0,0,.5)" height="200px" cover>
                                 <v-card-title class="text-white" v-text="med.FileName"></v-card-title>
                             </v-img>
-                            <v-card-subtitle class="text-grey-darken-4"
-                                v-text="useHRSize(med.FileSize)"></v-card-subtitle>
+                            <v-card-subtitle class="text-grey-darken-4 d-flex">
+                                {{ secondsToDuration(med.Duration) }}
+                                <v-spacer></v-spacer>
+                                {{ useHRSize(med.FileSize) }}
+                            </v-card-subtitle>
                             <v-card-actions>
                                 <a :href="getDlPath(med.ID)"><v-btn density="compact" color="medium-emphasis"
                                         icon="mdi-download"></v-btn></a>
@@ -48,7 +51,8 @@ interface MediaListType {
         FileName: string
         FileSize: number
         Thumbnail: string
-        ID: string
+        ID: string,
+        Duration: number
     }[]
 }
 // ...
@@ -72,7 +76,17 @@ function resetState() {
     deleteOverlays.fill(false, 0, mediaList.value!.Total)
     deletingState.fill(false, 0, mediaList.value!.Total)
 }
+function secondsToDuration(seconds: number) {
+    seconds = Number(seconds);
+    const h = Math.floor(seconds / 3600);
+    const m = Math.floor(seconds % 3600 / 60);
+    const s = Math.floor(seconds % 3600 % 60);
 
+    const hDisplay = h > 9 ? h : "0" + h;
+    const mDisplay = m > 9 ? m : "0" + m;
+    const sDisplay = s > 9 ? s : "0" + s;
+    return `${hDisplay}:${mDisplay}:${sDisplay}`;
+}
 // ...
 const pageSize = 9
 const currentPage = ref(1)
