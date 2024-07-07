@@ -33,12 +33,19 @@ export default defineNuxtConfig({
     isEnabled: true,
     globalAppMiddleware: true,
     baseURL: process.env.NUXT_AUTH_BASE_URL ? process.env.NUXT_AUTH_BASE_URL : "/auth",
+    session: {
+      enableRefreshPeriodically: false,
+      enableRefreshOnWindowFocus: false,
+    },
     provider: {
       type: "local",
       endpoints: {
         signIn: { path: "login" },
         getSession: { path: "session" },
       },
+      token: {
+        maxAgeInSeconds: 60 * 24 * 365
+      }
     },
   },
   // ...
