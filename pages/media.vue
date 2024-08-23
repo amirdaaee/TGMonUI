@@ -17,7 +17,7 @@
                             <v-card-actions>
                                 <a :href="getDlPath(med.ID)"><v-btn density="compact" color="medium-emphasis"
                                         icon="mdi-download"></v-btn></a>
-                                <a :href="getStreamPath(med.ID)" target="_blank"><v-btn density="compact"
+                                <a :href="getWatchPath(med.ID, med.FileName)" target="_blank"><v-btn density="compact"
                                         color="medium-emphasis" icon="mdi-play-circle"></v-btn></a>
                                 <a :href="getMXPath(med.ID, med.FileName)"><v-btn density="compact"
                                         color="medium-emphasis" icon="mdi-play-network"></v-btn></a>
@@ -58,6 +58,9 @@ interface MediaListType {
 // ...
 function getStreamPath(mediaID: string) {
     return useRuntimeConfig().public.baseStream + "/" + mediaID
+}
+function getWatchPath(mediaID: string, title: string) {
+    return `/watch/?q=${mediaID}&n=${title}`
 }
 function getDlPath(mediaID: string) {
     return getStreamPath(mediaID) + "?d=true"
