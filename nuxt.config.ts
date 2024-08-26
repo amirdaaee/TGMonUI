@@ -53,6 +53,7 @@ export default defineNuxtConfig({
     public: {
       baseApi: '/api',
       baseStream: '/stream',
+      baseThumb: '/thumb'
     }
   }
   // ...

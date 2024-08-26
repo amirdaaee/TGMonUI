@@ -5,7 +5,7 @@
                 <v-row dense>
                     <v-col v-for="med, n in mediaList?.Media" :key="n" :cols="12" :lg="4">
                         <v-card>
-                            <v-img :src="'data:image/gif;base64,' + med.Thumbnail" class="align-end"
+                            <v-img :src="`${useRuntimeConfig().public.baseThumb}/${med.Thumbnail}`" class="align-end"
                                 gradient="to bottom, rgba(0,0,0,.1), rgba(0,0,0,.5)" height="200px" cover>
                                 <v-card-title class="text-white" v-text="med.FileName"></v-card-title>
                             </v-img>
