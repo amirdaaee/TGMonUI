@@ -31,7 +31,7 @@
                     </v-col>
                 </v-row>
             </v-container>
-            <v-pagination :length="totalPages" v-model="currentPage"></v-pagination>
+            <v-pagination :length="totalPages" v-model="currentPage" total-visible="7"></v-pagination>
             <v-overlay v-model="loadingState" class="align-center justify-center" persistent contained />
         </v-card>
         <v-btn icon="mdi-delete-empty" size="x-large" class="position-fixed" color="red" style="bottom:10px;right:10px"
