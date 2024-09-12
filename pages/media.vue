@@ -43,7 +43,8 @@
 </template>
 
 <script setup lang="ts">
-
+import { useRouter } from 'vue-router';
+const router = useRouter()
 interface MediaListType {
     Total: number
     Media: {
@@ -103,11 +104,15 @@ function secondsToDuration(seconds: number) {
 }
 // ...
 const pageSize = 9
-const currentPage = ref(1)
+const currentPage = ref(Number(useRoute().query.page) || 1)
 const loadingState = ref(false)
 
 const deleteModelState = ref<boolean>(false)
 const selection = reactive<string[]>([])
+
+watch(currentPage, (newValue) => {
+    router.push({ query: { page: newValue } })
+})
 
 const totalPages = computed(() => {
     return mediaList.value ? Math.ceil(mediaList.value.Total / pageSize) : 1
