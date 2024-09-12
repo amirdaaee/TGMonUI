@@ -7,8 +7,6 @@ export function useAPI<T>(
     const {
         token,
     } = useAuth()
-    let head = options.headers ? options.headers : {}
-
 
     return useFetch(url, {
         headers: {

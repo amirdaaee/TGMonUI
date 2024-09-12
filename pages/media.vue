@@ -1,10 +1,10 @@
 <template>
-    <v-main class="" style="min-height: 300px;">
-        <v-card class="mx-auto" max-width="800">
+    <v-main min-height="300">
+        <v-card class="mx-auto " max-width="800">
             <v-container fluid>
                 <v-row dense>
                     <v-col v-for="med, n in mediaList?.Media" :key="n" :cols="12" :lg="4">
-                        <v-card>
+                        <v-card :color="selection.indexOf(med.ID) == -1 ? '' : 'blue-grey-lighten-4'">
                             <v-img :src="`${useRuntimeConfig().public.baseThumb}/${med.Thumbnail}`" class="align-end"
                                 gradient="to bottom, rgba(0,0,0,.1), rgba(0,0,0,.5)" height="200px" cover>
                                 <v-card-title class="text-white" v-text="med.FileName"></v-card-title>
@@ -22,29 +22,28 @@
                                 <a :href="getMXPath(med.ID, med.FileName)"><v-btn density="compact"
                                         color="medium-emphasis" icon="mdi-play-network"></v-btn></a>
                                 <v-spacer></v-spacer>
-                                <v-btn @click="deleteOverlays[n] = true" density="compact" color="medium-emphasis"
-                                    icon="mdi-delete"></v-btn>
-                            </v-card-actions>
+                                <v-btn @click="revertSelection(med.ID)" density="compact"
+                                    :color="selection.indexOf(med.ID) == -1 ? 'medium-emphasis' : 'blue-darken-4'"
+                                    :icon="selection.indexOf(med.ID) == -1 ? 'mdi-radiobox-blank' : 'mdi-radiobox-marked'"></v-btn>
 
-                            <v-overlay v-model="deleteOverlays[n]" class="align-center justify-center"
-                                :persistent="deletingState[n]" contained>
-                                <v-btn color="red" @click="deletingState[n] = true; deleteMedia(med.ID)"
-                                    :disabled="deletingState[n]">
-                                    Confirm
-                                </v-btn>
-                            </v-overlay>
+                            </v-card-actions>
                         </v-card>
                     </v-col>
                 </v-row>
             </v-container>
             <v-pagination :length="totalPages" v-model="currentPage"></v-pagination>
-            <v-overlay v-model="loadingState" class="align-center justify-center" :persistent="true" contained>
-            </v-overlay>
+            <v-overlay v-model="loadingState" class="align-center justify-center" persistent contained />
         </v-card>
+        <v-btn icon="mdi-delete-empty" size="x-large" class="position-fixed" color="red" style="bottom:10px;right:10px"
+            v-show="selection.length > 0" transition="scroll-x-reverse-transition"
+            @click="deleteModelState = true"></v-btn>
+        <delete-modal v-model:display="deleteModelState" :items="deleteItemComputed"
+            @confirm="deleteMedia"></delete-modal>
     </v-main>
 </template>
 
 <script setup lang="ts">
+
 interface MediaListType {
     Total: number
     Media: {
@@ -60,7 +59,7 @@ function getStreamPath(mediaID: string) {
     return useRuntimeConfig().public.baseStream + "/" + mediaID
 }
 function getWatchPath(mediaID: string, title: string) {
-    return `/watch/?q=${mediaID}&n=${title}`
+    return `/watch/?q=${mediaID}&n=${encodeURIComponent(title)}`
 }
 function getDlPath(mediaID: string) {
     return getStreamPath(mediaID) + "?d=true"
@@ -68,16 +67,28 @@ function getDlPath(mediaID: string) {
 function getMXPath(mediaID: string, fileName: string) {
     return `intent:${getStreamPath(mediaID)}.m3u8#Intent;package=com.mxtech.videoplayer.ad;S.title=${encodeURI(fileName)};S.decode_mode=2;end`
 }
-async function deleteMedia(mediaID: string) {
-    await useAPI(useRuntimeConfig().public.baseApi + '/media/' + mediaID, { method: "DELETE" })
-    mediaList.value!.Total -= 1
-    currentPage.value = Math.min(totalPages.value, currentPage.value)
+async function deleteMedia() {
+    loadingState.value = true
+    let prmsList = <Array<Promise<any>>>[]
+    mediaList.value?.Media.forEach(function (v) {
+        if (selection.indexOf(v.ID) != -1) {
+            prmsList.push(useAPI(useRuntimeConfig().public.baseApi + '/media/' + v.ID, { method: "DELETE" }))
+        }
+    })
+    await Promise.all(prmsList)
     await mediaListRef()
-    resetState()
+    for (let i = 0; i < selection.length; i++) {
+        selection.pop()
+    }
+    loadingState.value = false
 }
-function resetState() {
-    deleteOverlays.fill(false, 0, mediaList.value!.Total)
-    deletingState.fill(false, 0, mediaList.value!.Total)
+function revertSelection(mediaID: string) {
+    const index = selection.indexOf(mediaID);
+    if (index === -1) {
+        selection.push(mediaID);
+    } else {
+        selection.splice(index, 1);
+    }
 }
 function secondsToDuration(seconds: number) {
     seconds = Number(seconds);
@@ -94,14 +105,24 @@ function secondsToDuration(seconds: number) {
 const pageSize = 9
 const currentPage = ref(1)
 const loadingState = ref(false)
-const deleteOverlays = reactive<boolean[]>([])
-const deletingState = reactive<boolean[]>([])
+
+const deleteModelState = ref<boolean>(false)
+const selection = reactive<string[]>([])
 
 const totalPages = computed(() => {
     return mediaList.value ? Math.ceil(mediaList.value.Total / pageSize) : 1
 })
 const apiQuery = computed(() => {
     return { "page": currentPage.value, "page_size": pageSize }
+})
+const deleteItemComputed = computed(() => {
+    let i = <Array<String>>[]
+    mediaList.value?.Media.forEach(function (v) {
+        if (selection.indexOf(v.ID) != -1) {
+            i.push(`${v.FileName} # ${useHRSize(v.FileSize)} # ${secondsToDuration(v.Duration)}`)
+        }
+    })
+    return i
 })
 const { data: mediaList, refresh: mediaListRef } = await useAPI<MediaListType>(useRuntimeConfig().public.baseApi + '/media', {
     query: apiQuery,

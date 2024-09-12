@@ -32,28 +32,21 @@ export default defineNuxtConfig({
   auth: {
     isEnabled: true,
     globalAppMiddleware: true,
-    baseURL: process.env.NUXT_AUTH_BASE_URL ? process.env.NUXT_AUTH_BASE_URL : "/auth",
-    session: {
-      enableRefreshPeriodically: false,
-      enableRefreshOnWindowFocus: false,
-    },
+    disableServerSideAuth: false,
     provider: {
       type: "local",
-      endpoints: {
-        signIn: { path: "login" },
-        getSession: { path: "session" },
-      },
       token: {
-        maxAgeInSeconds: 60 * 24 * 365
+        maxAgeInSeconds: 365 * 24 * 60 * 60
       }
     },
   },
   // ...
   runtimeConfig: {
+    baseAuth: '',
     public: {
-      baseApi: '/api',
-      baseStream: '/stream',
-      baseThumb: '/thumb'
+      baseApi: '',
+      baseStream: '',
+      baseThumb: '',
     }
   }
   // ...
