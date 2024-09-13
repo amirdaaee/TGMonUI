@@ -19,8 +19,21 @@
                                         icon="mdi-download"></v-btn></a>
                                 <a :href="getWatchPath(med.ID, med.FileName)" target="_blank"><v-btn density="compact"
                                         color="medium-emphasis" icon="mdi-play-circle"></v-btn></a>
-                                <a :href="getMXPath(med.ID, med.FileName)"><v-btn density="compact"
-                                        color="medium-emphasis" icon="mdi-play-network"></v-btn></a>
+
+                                <v-menu scroll-strategy="close">
+                                    <template v-slot:activator="{ props }">
+                                        <v-btn density="compact" color="medium-emphasis" icon="mdi-play-network"
+                                            v-bind="props"></v-btn>
+                                    </template>
+                                    <v-list>
+                                        <v-list-item :href="getKMPath(med.ID, med.FileName)">
+                                            <v-list-item-title v-text="'KM player'" />
+                                        </v-list-item>
+                                        <v-list-item :href="getMXPath(med.ID, med.FileName)">
+                                            <v-list-item-title v-text="'MX player'" />
+                                        </v-list-item>
+                                    </v-list>
+                                </v-menu>
                                 <v-spacer></v-spacer>
                                 <v-btn @click="revertSelection(med.ID)" density="compact"
                                     :color="selection.indexOf(med.ID) == -1 ? 'medium-emphasis' : 'blue-darken-4'"
@@ -65,8 +78,14 @@ function getWatchPath(mediaID: string, title: string) {
 function getDlPath(mediaID: string) {
     return getStreamPath(mediaID) + "?d=true"
 }
+function getIntent(mediaID: string, fileName: string, intentTarget: string) {
+    return `intent:${getStreamPath(mediaID)}.m3u8#Intent;package=${intentTarget};S.title=${encodeURI(fileName)};end`
+}
 function getMXPath(mediaID: string, fileName: string) {
-    return `intent:${getStreamPath(mediaID)}.m3u8#Intent;package=com.mxtech.videoplayer.ad;S.title=${encodeURI(fileName)};S.decode_mode=2;end`
+    return getIntent(mediaID, fileName, "com.mxtech.videoplayer.ad")
+}
+function getKMPath(mediaID: string, fileName: string) {
+    return getIntent(mediaID, fileName, "com.kmplayer")
 }
 async function deleteMedia() {
     loadingState.value = true
