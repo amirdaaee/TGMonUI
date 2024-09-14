@@ -64,6 +64,7 @@ export default defineNuxtConfig({
       baseApi: '/api',
       baseStream: '/stream',
       baseThumb: '/tgmon-thumb',
+      baseAuth: ''
     }
   },
   // ...
