@@ -20,6 +20,7 @@
   },
   "packageManager": "yarn@1.22.22+sha1.ac34549e6aa8e7ead463a7407e1c7390f61a6610",
   "devDependencies": {
+    "@nuxt-alt/proxy": "^2.5.8",
     "typescript": "^5.5.2",
     "vite-plugin-vuetify": "^2.0.3",
     "vue-tsc": "^1",

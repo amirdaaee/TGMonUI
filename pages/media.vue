@@ -44,7 +44,7 @@
                     </v-col>
                 </v-row>
             </v-container>
-            <v-pagination :length="totalPages" v-model="currentPage" total-visible="7"></v-pagination>
+            <v-pagination :length="totalPages" v-model="currentPage" total-visible="4"></v-pagination>
             <v-overlay v-model="loadingState" class="align-center justify-center" persistent contained />
         </v-card>
         <v-btn icon="mdi-delete-empty" size="x-large" class="position-fixed" color="red" style="bottom:10px;right:10px"
@@ -78,11 +78,16 @@ function getWatchPath(mediaID: string, title: string) {
 function getDlPath(mediaID: string) {
     return getStreamPath(mediaID) + "?d=true"
 }
-function getIntent(mediaID: string, fileName: string, intentTarget: string) {
-    return `intent:${getStreamPath(mediaID)}.m3u8#Intent;package=${intentTarget};S.title=${encodeURI(fileName)};end`
+function getIntent(mediaID: string, fileName: string, intentTarget: string, extra: string = "") {
+    const streamPath = getStreamPath(mediaID)
+    let u = new URL(streamPath)
+    if (u.origin == "") {
+        u = new URL(streamPath, window.location.origin)
+    }
+    return `intent:${u.toString()}.mp4#Intent;${extra}package=${intentTarget};end`
 }
 function getMXPath(mediaID: string, fileName: string) {
-    return getIntent(mediaID, fileName, "com.mxtech.videoplayer.ad")
+    return getIntent(mediaID, fileName, "com.mxtech.videoplayer.ad", `S.title=${encodeURI(fileName)};`)
 }
 function getKMPath(mediaID: string, fileName: string) {
     return getIntent(mediaID, fileName, "com.kmplayer")

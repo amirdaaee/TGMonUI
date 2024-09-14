@@ -839,6 +839,17 @@
     proc-log "^4.0.0"
     which "^4.0.0"
 
+"@nuxt-alt/proxy@^2.5.8":
+  version "2.5.8"
+  resolved "https://registry.yarnpkg.com/@nuxt-alt/proxy/-/proxy-2.5.8.tgz#8fe08f0e29528723c7c4b0c95c31be5e801f3c80"
+  integrity sha512-5Rrh31rMKSi7Atr/bbYTuKJnmMQJ/UlQhQCiI4GIPZwO+oNnKvpH1s2XRWaMfLwKGn3LI7dBdBrhrBklCxcCKg==
+  dependencies:
+    "@nuxt/kit" "^3.9.3"
+    "@refactorjs/http-proxy" latest
+    "@refactorjs/serialize" latest
+    defu "^6.1.3"
+    picocolors "^1.0.0"
+
 "@nuxt/devalue@^2.0.2":
   version "2.0.2"
   resolved "https://registry.yarnpkg.com/@nuxt/devalue/-/devalue-2.0.2.tgz#5749f04df13bda4c863338d8dabaf370f45ef7c7"
@@ -938,7 +949,7 @@
     unimport "^3.7.2"
     untyped "^1.4.2"
 
-"@nuxt/kit@^3.12.4":
+"@nuxt/kit@^3.12.4", "@nuxt/kit@^3.9.3":
   version "3.13.1"
   resolved "https://registry.yarnpkg.com/@nuxt/kit/-/kit-3.13.1.tgz#69501efc661ba861f45ed947918efb3e84838365"
   integrity sha512-FkUL349lp/3nVfTIyws4UDJ3d2jyv5Pk1DC1HQUCOkSloYYMdbRcQAUcb4fe2TCLNWvHM+FhU8jnzGTzjALZYA==
@@ -1413,6 +1424,18 @@
   version "1.1.0"
   resolved "https://registry.yarnpkg.com/@protobufjs/utf8/-/utf8-1.1.0.tgz#a777360b5b39a1a2e5106f8e858f2fd2d060c570"
   integrity sha512-Vvn3zZrhQZkkBE8LSuW3em98c0FwgO4nxzv6OdSxPKJIEKY2bGbHn+mhGIPerzI4twdxaP8/0+06HBpwf345Lw==
+
+"@refactorjs/http-proxy@latest":
+  version "0.2.14"
+  resolved "https://registry.yarnpkg.com/@refactorjs/http-proxy/-/http-proxy-0.2.14.tgz#2139316ed452dae281bd7002455220d2374b98bd"
+  integrity sha512-JI35e5QjEWns3KPRw5j6cCiPN60GtOLR2bgr4hPr0kIgQaxVCVIEsWnalC0Avvy02a5a8NSmpjFbpoDESD1PxQ==
+  dependencies:
+    requires-port "^1.0.0"
+
+"@refactorjs/serialize@latest":
+  version "1.0.7"
+  resolved "https://registry.yarnpkg.com/@refactorjs/serialize/-/serialize-1.0.7.tgz#413bc69ff7bc8790859bd4e46a9be9e8608a07c4"
+  integrity sha512-6fdXkxp06pZ/E8YjxxCBm0gF234VadKvma2ut1vNkG991IDOnCr0DjIlxKmB44yg0hSMYfiG9s6rMOKg03WDSg==
 
 "@rollup/plugin-alias@^5.1.0":
   version "5.1.0"
@@ -5417,6 +5440,11 @@ require-in-the-middle@^7.1.1:
     debug "^4.1.1"
     module-details-from-path "^1.0.3"
     resolve "^1.22.1"
+
+requires-port@^1.0.0:
+  version "1.0.0"
+  resolved "https://registry.yarnpkg.com/requires-port/-/requires-port-1.0.0.tgz#925d2601d39ac485e091cf0da5c6e694dc3dcaff"
+  integrity sha512-KigOCHcocU3XODJxsu8i/j8T9tzT4adHiecwORRQ0ZZFcp7ahwXuRU1m+yuO90C5ZUyGeGfocHDI14M3L3yDAQ==
 
 requrl@^3.0.2:
   version "3.0.2"
