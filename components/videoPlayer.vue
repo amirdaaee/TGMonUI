@@ -12,18 +12,23 @@ const props = defineProps({
     type: String,
     required: true,
   },
+  videoPoster: {
+    type: String,
+    required: true,
+  },
 });
 
 const videoPlayer = ref<Element>();
 let videoOptions = {
-  controls: true,
-  controlBar: { remainingTimeDisplay: { displayNegative: true } },
+  poster: props.videoPoster,
   sources: [
     {
       src: props.videoSrc,
       type: 'video/mp4'
     },
   ],
+  controls: true,
+  controlBar: { remainingTimeDisplay: { displayNegative: true } },
   nativeControlsForTouch: true,
   responsive: true,
   enableSmoothSeeking: true,

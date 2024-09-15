@@ -20,14 +20,14 @@
                                 <v-card-title class="text-white" v-text="med.FileName"></v-card-title>
                             </v-img>
                             <v-card-subtitle class="text-grey-darken-4 d-flex">
-                                {{ secondsToDuration(med.Duration) }}
+                                {{ useDuration(med.Duration) }}
                                 <v-spacer></v-spacer>
                                 {{ useHRSize(med.FileSize) }}
                             </v-card-subtitle>
                             <v-card-actions>
                                 <a :href="getDlPath(med.ID)"><v-btn density="compact" color="medium-emphasis"
                                         icon="mdi-download"></v-btn></a>
-                                <a :href="getWatchPath(med.ID, med.FileName)" target="_blank"><v-btn density="compact"
+                                <a :href="useURL().watch(med.ID)" target="_blank"><v-btn density="compact"
                                         color="medium-emphasis" icon="mdi-play-circle"></v-btn></a>
 
                                 <v-menu scroll-strategy="close">
@@ -66,29 +66,17 @@
 
 <script setup lang="ts">
 import { useRouter } from 'vue-router';
+import type { MediaListType } from '~/types';
 const router = useRouter()
-interface MediaListType {
-    Total: number
-    Media: {
-        FileName: string
-        FileSize: number
-        Thumbnail: string
-        ID: string,
-        Duration: number
-    }[]
-}
 // ...
 function getThumbPath(mediaID: string) {
     if (showThumb.value) {
-        return `${useRuntimeConfig().public.baseThumb}/${mediaID}`
+        return useURL().thumbnail(mediaID)
     }
     return "https://davooda.com/images/basic/basic-gallery-photos-pictures-icon.svg"
 }
 function getStreamPath(mediaID: string) {
-    return useRuntimeConfig().public.baseStream + "/" + mediaID
-}
-function getWatchPath(mediaID: string, title: string) {
-    return `/watch/?q=${mediaID}&n=${encodeURIComponent(title)}`
+    return useURL().stream(mediaID)
 }
 function getDlPath(mediaID: string) {
     return getStreamPath(mediaID) + "?d=true"
@@ -130,17 +118,6 @@ function revertSelection(mediaID: string) {
         selection.splice(index, 1);
     }
 }
-function secondsToDuration(seconds: number) {
-    seconds = Number(seconds);
-    const h = Math.floor(seconds / 3600);
-    const m = Math.floor(seconds % 3600 / 60);
-    const s = Math.floor(seconds % 3600 % 60);
-
-    const hDisplay = h > 9 ? h : "0" + h;
-    const mDisplay = m > 9 ? m : "0" + m;
-    const sDisplay = s > 9 ? s : "0" + s;
-    return `${hDisplay}:${mDisplay}:${sDisplay}`;
-}
 // ...
 const pageSize = 9
 const currentPage = ref(Number(useRoute().query.page) || 1)
@@ -166,7 +143,7 @@ const deleteItemComputed = computed(() => {
     let i = <Array<String>>[]
     mediaList.value?.Media.forEach(function (v) {
         if (selection.indexOf(v.ID) != -1) {
-            i.push(`${v.FileName} # ${useHRSize(v.FileSize)} # ${secondsToDuration(v.Duration)}`)
+            i.push(`${v.FileName} # ${useHRSize(v.FileSize)} # ${useDuration(v.Duration)}`)
         }
     })
     return i
