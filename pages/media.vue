@@ -1,11 +1,21 @@
 <template>
     <v-main min-height="300">
         <v-card class="mx-auto " max-width="800">
+            <v-toolbar density="compact">
+                <!-- <v-app-bar-nav-icon></v-app-bar-nav-icon>
+
+                <v-toolbar-title>Title</v-toolbar-title> -->
+
+                <v-spacer></v-spacer>
+                <v-btn @click="showThumb = !showThumb" icon>
+                    <v-icon>{{ showThumb ? 'mdi-eye' : 'mdi-eye-off' }}</v-icon>
+                </v-btn>
+            </v-toolbar>
             <v-container fluid>
                 <v-row dense>
                     <v-col v-for="med, n in mediaList?.Media" :key="n" :cols="12" :lg="4">
                         <v-card :color="selection.indexOf(med.ID) == -1 ? '' : 'blue-grey-lighten-4'">
-                            <v-img :src="`${useRuntimeConfig().public.baseThumb}/${med.Thumbnail}`" class="align-end"
+                            <v-img :src="getThumbPath(med.Thumbnail)" class="align-end"
                                 gradient="to bottom, rgba(0,0,0,.1), rgba(0,0,0,.5)" height="200px" cover>
                                 <v-card-title class="text-white" v-text="med.FileName"></v-card-title>
                             </v-img>
@@ -44,14 +54,13 @@
                     </v-col>
                 </v-row>
             </v-container>
-            <v-pagination :length="totalPages" v-model="currentPage" total-visible="4"></v-pagination>
+            <v-pagination size="" :length="totalPages" v-model="currentPage" total-visible="4"></v-pagination>
             <v-overlay v-model="loadingState" class="align-center justify-center" persistent contained />
         </v-card>
-        <v-btn icon="mdi-delete-empty" size="x-large" class="position-fixed" color="red" style="bottom:10px;right:10px"
-            v-show="selection.length > 0" transition="scroll-x-reverse-transition"
-            @click="deleteModelState = true"></v-btn>
         <delete-modal v-model:display="deleteModelState" :items="deleteItemComputed"
             @confirm="deleteMedia"></delete-modal>
+        <v-fab size="large" icon="mdi-delete-empty" color="red" v-show="selection.length > 0"
+            @click="deleteModelState = true" absoulte app></v-fab>
     </v-main>
 </template>
 
@@ -69,6 +78,12 @@ interface MediaListType {
     }[]
 }
 // ...
+function getThumbPath(mediaID: string) {
+    if (showThumb.value) {
+        return `${useRuntimeConfig().public.baseThumb}/${mediaID}`
+    }
+    return "https://davooda.com/images/basic/basic-gallery-photos-pictures-icon.svg"
+}
 function getStreamPath(mediaID: string) {
     return useRuntimeConfig().public.baseStream + "/" + mediaID
 }
@@ -130,12 +145,15 @@ function secondsToDuration(seconds: number) {
 const pageSize = 9
 const currentPage = ref(Number(useRoute().query.page) || 1)
 const loadingState = ref(false)
-
 const deleteModelState = ref<boolean>(false)
+const showThumb = ref<boolean>(Boolean(useRoute().query.d == "0" ? false : true))
 const selection = reactive<string[]>([])
 
 watch(currentPage, (newValue) => {
     router.push({ query: { page: newValue } })
+})
+watch(showThumb, (newValue) => {
+    router.push({ query: { d: (newValue ? 1 : 0) } })
 })
 
 const totalPages = computed(() => {
