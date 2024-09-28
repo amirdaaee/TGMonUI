@@ -1,7 +1,3 @@
-<template>
-  <video ref="videoPlayer" class="video-js vjs-default-skin vjs-16-9" controls preload="auto"></video>
-</template>
-
 <script setup lang="ts">
 import videojs from 'video.js';
 import type Player from 'video.js/dist/types/player';
@@ -63,6 +59,10 @@ onBeforeUnmount(() => {
 });
 
 </script>
+<template>
+  <video ref="videoPlayer" class="video-js vjs-default-skin vjs-16-9" controls preload="auto"></video>
+</template>
+
 
 <style>
 @import 'video.js/dist/video-js.css';

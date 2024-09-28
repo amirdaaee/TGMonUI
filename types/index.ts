@@ -1,4 +1,4 @@
-interface MediaType {
+export interface MediaType {
     FileName: string
     FileSize: number
     Thumbnail: string
