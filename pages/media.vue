@@ -20,8 +20,17 @@
         </v-card>
         <delete-modal v-model:display="deleteModelState" :items="selectedItemComputed"
             @confirm="deleteMedia"></delete-modal>
-        <v-fab size="large" icon="mdi-delete-empty" color="red" v-show="isAnySelected" @click="deleteModelState = true"
-            absoulte app></v-fab>
+        <!-- <v-fab size="large" icon="mdi-delete-empty" color="red" v-show="isAnySelected" @click="deleteModelState = true"
+            absoulte app></v-fab> -->
+        <v-speed-dial transition="fade-transition" location="top right" :offset="0" v-if="isAnySelected">
+            <template v-slot:activator="{ props: activatorProps }">
+                <v-fab v-bind="activatorProps" size="large" icon="$vuetify" color="light-blue-darken-4" absoulte
+                    app></v-fab>
+            </template>
+            <v-btn key="1" icon="mdi-delete-empty" color="red" @click="deleteModelState = true" absoulte app />
+            <v-btn key="2" icon="mdi-eye" color="yellow" @click="createThumbnail" absoulte app />
+        </v-speed-dial>\
+        <v-snackbar v-model="showSnackbar" :timeout="2000" :color="snackbarColor">{{ snackbarText }}</v-snackbar>
     </v-main>
 </template>
 
@@ -34,6 +43,9 @@ const pageSize = 9
 const currentPage = ref(Number(useRoute().query.page) || 1)
 const loadingState = ref(false)
 const deleteModelState = ref<boolean>(false)
+const showSnackbar = ref<boolean>(false)
+const snackbarColor = ref<string>("")
+const snackbarText = ref<string>("")
 const showThumb = ref<boolean>(Boolean(useRoute().query.d == "0" ? false : true))
 const selection: { [id: string]: boolean; } = reactive({});
 const totalPages = computed(() => {
@@ -90,6 +102,27 @@ async function deleteMedia() {
     await mediaListRef()
     clearSelection()
     loadingState.value = false
+}
+async function createThumbnail() {
+    loadingState.value = true
+    let idList = <Array<string>>[]
+    selectedItemComputed.value.forEach(function (v) {
+        idList.push(v.ID)
+    })
+    let res = await useAPI(useRuntimeConfig().public.baseApi + '/media/thumbgen', { method: "POST", body: { "media_ids": idList } })
+
+    if (res.error.value != null) {
+        snack("error sending request", "red")
+    } else {
+        snack("request sent", "green")
+        clearSelection()
+    }
+    loadingState.value = false
+}
+function snack(message: string, color: string) {
+    snackbarColor.value = color
+    snackbarText.value = message
+    showSnackbar.value = true
 }
 // ...
 
