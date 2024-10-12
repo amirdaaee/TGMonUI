@@ -109,7 +109,14 @@ async function createThumbnail() {
     selectedItemComputed.value.forEach(function (v) {
         idList.push(v.ID)
     })
-    let res = await useAPI(useRuntimeConfig().public.baseApi + '/media/thumbgen', { method: "POST", body: { "media_ids": idList } })
+    let jobs: any[] = []
+    idList.forEach((x) => {
+        jobs.push({
+            "mediaID": x,
+            "type": "THUMBNAIL"
+        })
+    })
+    let res = await useAPI(useRuntimeConfig().public.baseApi + '/job/', { method: "POST", body: { "job": jobs } })
 
     if (res.error.value != null) {
         snack("error sending request", "red")
