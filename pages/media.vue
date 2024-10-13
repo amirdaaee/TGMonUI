@@ -11,7 +11,7 @@
                 <v-row dense>
                     <v-col v-for="med, n in mediaList?.Media" :key="n" :cols="12" :lg="4">
                         <media-card :media="med" :show-image="pageState.showThumb" :selectable="true" :dlable="true"
-                            v-model:selected="pageState.selection[med.ID]" />
+                            v-model:selected="pageState.selection[med.ID]" :has-job="hasJobComputed[med.ID]" />
                     </v-col>
                 </v-row>
             </v-container>
@@ -30,13 +30,13 @@
         </v-speed-dial>\
         <v-snackbar v-model="pageState.showSnackbar" :timeout="2000" :color="pageState.snackbarColor">{{
             pageState.snackbarText
-        }}</v-snackbar>
+            }}</v-snackbar>
     </v-main>
 </template>
 
 <script setup lang="ts">
 import { useRouter } from 'vue-router';
-import type { MediaListType, MediaType } from '~/types';
+import type { JobListType, MediaListType, MediaType } from '~/types';
 const router = useRouter()
 // ...
 interface PageState {
@@ -67,10 +67,11 @@ const pageState = reactive<PageState>({
 const totalPages = computed(() => {
     return mediaList.value ? Math.ceil(mediaList.value.Total / pageSize) : 1
 })
-const apiQuery = computed(() => {
+const mediaQuery = computed(() => {
     return { "page": pageState.currentPage, "page_size": pageSize }
 })
-const { data: mediaList, refresh: mediaListRef, status: mediaListStat } = await useAPI<MediaListType>(useRuntimeConfig().public.baseApi + '/media', { query: apiQuery })
+const { data: mediaList, refresh: mediaListRef, status: mediaListStat } = await useAPI<MediaListType>(useRuntimeConfig().public.baseApi + '/media/', { query: mediaQuery })
+const { data: jobList, refresh: jobListRef, status: jobListStat } = await useAPI<JobListType>(useRuntimeConfig().public.baseApi + '/job', {})
 // ...
 watch(() => pageState.currentPage, (newValue) => {
     router.push({ query: { page: newValue } })
@@ -78,8 +79,8 @@ watch(() => pageState.currentPage, (newValue) => {
 watch(() => pageState.showThumb, (newValue) => {
     router.push({ query: { d: (newValue ? 1 : 0) } })
 })
-watch(() => [mediaListStat.value], (newValue) => {
-    pageState.isLoading = (newValue[0] == "pending")
+watch(() => [mediaListStat.value, jobListStat.value], (newValue) => {
+    pageState.isLoading = (newValue[0] == "pending" || newValue[1] == "pending")
 })
 const isAnySelected = computed(() => {
     for (let key in pageState.selection) {
@@ -97,6 +98,18 @@ const selectedItemComputed = computed(() => {
         }
     })
     return i
+})
+const hasJobComputed = computed(() => {
+    console.log(jobList.value)
+    let res: Record<string, boolean> = {}
+    if (!jobList.value) {
+        return res
+    }
+    for (let index = 0; index < jobList.value.Job.length; index++) {
+        res[jobList.value.Job[index].mediaID] = true
+    }
+    console.log(jobList.value)
+    return res
 })
 // ...
 function clearSelection() {
@@ -135,6 +148,7 @@ async function createThumbnail() {
     } else {
         snack("request sent", "green")
         clearSelection()
+        jobListRef()
     }
     pageState.isLoading = false
 }

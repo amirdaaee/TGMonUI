@@ -7,8 +7,10 @@ const props = withDefaults(defineProps<{
   selectable?: boolean,
   dlable?: boolean,
   intentable?: boolean,
+  hasJob: boolean,
 }>(), {
   showImage: true,
+  hasJob: false,
 })
 const isSelected = defineModel<boolean>("selected")
 // ...
@@ -48,6 +50,9 @@ function revertSelection() {
     <media-image :img-src="getThumbPath(props.media.Thumbnail)" :title="props.media.FileName" />
     <v-card-subtitle class="text-grey-darken-4 d-flex">
       {{ useDuration(props.media.Duration) }}
+      <v-icon v-if="hasJob" icon="mdi-cog" size="small" class="ml-1" color="light-blue-darken-4"></v-icon>
+      <v-icon v-if="media.Sprite != ''" icon="mdi-filmstrip-box-multiple" size="small" class="ml-1"
+        color="light-blue-darken-4"></v-icon>
       <v-spacer></v-spacer>
       {{ useHRSize(props.media.FileSize) }}
     </v-card-subtitle>

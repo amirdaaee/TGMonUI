@@ -6,7 +6,7 @@
                     <div class="text-body-2">{{ vidData?.Media.FileName }}</div>
                     <VideoPlayer :videoSrc="useURL().stream(vidID)"
                         :videoPoster="useURL().thumbnail(vidData?.Media.Thumbnail || '')"
-                        :videoTitle="vidData?.Media.FileName" />
+                        :videoTitle="vidData?.Media.FileName" :videoVtt="vidData?.Media.Vtt" />
                 </v-sheet>
                 <div class="d-flex mt-2">
                     <v-row justify="space-between" class="overflow-hidden">

@@ -9,6 +9,7 @@ export default defineNuxtConfig({
       [process.env.NUXT_PUBLIC_BASE_THUMB + "/**" || ""]: { proxy: process.env.BASE_THUMB_PROXY + "/**" },
     }
   },
+  ssr: false,
   devtools: { enabled: true },
   typescript: {
     typeCheck: false
