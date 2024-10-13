@@ -1,7 +1,6 @@
 <script setup lang="ts">
-import videojs from 'video.js';
-import type Player from 'video.js/dist/types/player';
-import { onBeforeUnmount, onMounted, ref } from 'vue';
+// import type Player from 'video.js/dist/types/player';
+import Plyr from 'plyr';
 
 const props = defineProps({
   videoSrc: {
@@ -12,58 +11,35 @@ const props = defineProps({
     type: String,
     required: true,
   },
+  videoVtt: {
+    type: String,
+    required: false,
+  },
 });
-
-const videoPlayer = ref<Element>();
-let videoOptions = {
-  poster: props.videoPoster,
-  sources: [
-    {
-      src: props.videoSrc,
-      type: 'video/mp4'
-    },
-  ],
-  controls: true,
-  controlBar: { remainingTimeDisplay: { displayNegative: true } },
-  nativeControlsForTouch: true,
-  responsive: true,
-  enableSmoothSeeking: true,
-  fluid: true,
-  preload: "auto"
-  // spatialNavigation: { enabled: true, horizontalSeek: true },
-}
-let player: Player | null = null;
-function setTimeStorage() {
-  localStorage.setItem('lastWatchTime-' + props.videoSrc, player?.currentTime ? String(player.currentTime()) : "0");
-}
+let player: Plyr | undefined
 onMounted(() => {
-  if (videoPlayer) {
-    player = videojs(videoPlayer.value!, videoOptions, () => {
-      console.log('Player is ready');
-    });
-    const lt = localStorage.getItem('lastWatchTime-' + props.videoSrc)
-    if (lt) {
-      player.on(['durationchange'], () => { player?.currentTime(lt) });
-    }
-    player.on(['seeked', 'pause', 'play'], setTimeStorage);
-    setInterval(setTimeStorage, 10000);
-  } else {
-    console.error('Player element not found');
-  }
-});
+  player = new Plyr('video', {
+    previewThumbnails: { src: props.videoVtt, enabled: props.videoVtt ? true : false },
+    debug: true,
+    controls: ['rewind', 'fast-forward', 'play-large', 'progress', 'current-time', 'duration'],
+    ratio: "16:9",
 
+  });
+})
 onBeforeUnmount(() => {
   if (player) {
-    player.dispose();
+    player.destroy();
   }
 });
 
 </script>
 <template>
-  <video ref="videoPlayer" class="video-js vjs-default-skin vjs-16-9" controls preload="auto"></video>
+  <video controls playsinline crossorigin="true" :poster="props.videoPoster">
+    <source :src="props.videoSrc">
+  </video>
 </template>
 
 
 <style>
-@import 'video.js/dist/video-js.css';
+@import 'plyr/dist/plyr.css';
 </style>
