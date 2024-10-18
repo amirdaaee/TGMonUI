@@ -9,7 +9,7 @@
             </v-toolbar>
             <v-container fluid>
                 <v-row dense>
-                    <v-col v-for="med, n in mediaList?.Media" :key="n" :cols="12" :lg="4">
+                    <v-col v-for="med, n in mediaList?.Media" :key="n" :cols="12" :sm="6" :lg="4">
                         <media-card :media="med" :show-image="pageState.showThumb" :selectable="true" :dlable="true"
                             v-model:selected="pageState.selection[med.ID]" :has-job="hasJobComputed[med.ID]" />
                     </v-col>
@@ -30,7 +30,7 @@
         </v-speed-dial>\
         <v-snackbar v-model="pageState.showSnackbar" :timeout="2000" :color="pageState.snackbarColor">{{
             pageState.snackbarText
-            }}</v-snackbar>
+        }}</v-snackbar>
     </v-main>
 </template>
 
@@ -51,7 +51,7 @@ interface PageState {
 }
 
 // ...
-const pageSize = 9
+const pageSize = 12
 const pageState = reactive<PageState>({
     currentPage: Number(useRoute().query.page) || 1,
     showDeleteModel: false,

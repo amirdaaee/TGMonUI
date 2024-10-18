@@ -1,6 +1,8 @@
 <script setup lang="ts">
+import { useDisplay } from 'vuetify';
 import type { MediaType } from '~/types';
 
+const { mdAndDown } = useDisplay()
 const props = withDefaults(defineProps<{
   media: MediaType,
   showImage?: boolean
@@ -13,6 +15,7 @@ const props = withDefaults(defineProps<{
   hasJob: false,
 })
 const isSelected = defineModel<boolean>("selected")
+const showOverlay = ref<boolean>(false)
 // ...
 function getThumbPath(mediaID: string) {
   if (props.showImage) {
@@ -43,11 +46,16 @@ function getKMPath(mediaID: string, fileName: string) {
 function revertSelection() {
   isSelected.value = !isSelected.value
 }
+function showVTT() {
+  if (props.showImage) {
+    showOverlay.value = true
+  }
+}
 </script>
 
 <template>
   <v-card :color="isSelected ? 'blue-grey-lighten-4' : ''">
-    <media-image :img-src="getThumbPath(props.media.Thumbnail)" :title="props.media.FileName" />
+    <media-image :img-src="getThumbPath(props.media.Thumbnail)" :title="props.media.FileName" @click="showVTT" />
     <v-card-subtitle class="text-grey-darken-4 d-flex">
       {{ useDuration(props.media.Duration) }}
       <v-icon v-if="hasJob" icon="mdi-cog" size="small" class="ml-1" color="light-blue-darken-4"></v-icon>
@@ -80,6 +88,10 @@ function revertSelection() {
         :color="isSelected ? 'blue-darken-4' : 'medium-emphasis'"
         :icon="isSelected ? 'mdi-radiobox-marked' : 'mdi-radiobox-blank'"></v-btn>
     </v-card-actions>
+    <v-overlay v-model="showOverlay" class="align-center justify-center w-100" opacity="0.8" close-on-content-click>
+      <v-img :src="props.media.Sprite ? getThumbPath(props.media.Sprite) : getThumbPath(props.media.Thumbnail)"
+        :width="mdAndDown ? '100vw' : '40vw'" />
+    </v-overlay>
   </v-card>
 </template>
 
