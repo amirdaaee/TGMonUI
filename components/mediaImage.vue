@@ -19,7 +19,8 @@ const props = defineProps({
 <template>
   <v-img :src="props.imgSrc" class="align-end" gradient="to bottom, rgba(0,0,0,.1), rgba(0,0,0,.7)"
     :height="props.height" cover>
-    <div class="text-white text-subtitle-1 font-weight-medium ml-2 mb-1">{{ props.title }}</div>
+    <div class="text-white text-subtitle-1 font-weight-medium ml-2 mb-1 overflow-hidden text-no-wrap">{{ props.title }}
+    </div>
   </v-img>
 </template>
 
