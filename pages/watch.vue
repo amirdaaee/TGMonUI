@@ -2,31 +2,35 @@
     <v-container fluid class="my-auto">
         <v-row justify="center">
             <v-col style="max-width: 90vw; width: 100%;" lg="5">
-                <v-sheet class="overflow-hidden" :key="vidData?.Media.ID">
-                    <div class="text-body-2">{{ vidData?.Media.FileName }}</div>
-                    <VideoPlayer :videoSrc="useURL().stream(vidID)"
-                        :videoPoster="useURL().thumbnail(vidData?.Media.Sprite || vidData?.Media.Thumbnail || '')"
-                        :videoTitle="vidData?.Media.FileName"
-                        :videoVtt="useURL().thumbnail(vidData?.Media.Vtt || '')" />
-                </v-sheet>
-                <div class="d-flex mt-2">
-                    <v-row justify="space-between" class="overflow-hidden">
-                        <v-col v-for="x in [vidData?.Next, vidData?.Back]" col="6" lg="4" class="overflow-hidden">
-                            <template v-if="x?.ID">
-                                <NuxtLink :to="{ name: 'watch', query: { q: x.ID } }" class="text-decoration-none"
-                                    replace>
-                                    <media-image :img-src="useURL().thumbnail(x.Thumbnail)" :title="x.FileName"
-                                        @click="" />
-                                    <div
-                                        class="text-caption text-grey-darken-2 overflow-hidden text-no-wrap w-100 d-flex justify-space-between">
-                                        <div>{{ useDuration(x.Duration) }}</div>
-                                        <div>{{ useHRSize(x.FileSize) }}</div>
-                                    </div>
-                                </NuxtLink>
-                            </template>
-                        </v-col>
-                    </v-row>
-                </div>
+                <v-card class="overflow-hidden" :key="vidData?.Media.ID">
+                    <template v-slot:title>
+                        <span>{{ vidData?.Media.FileName }}</span>
+                    </template>
+                    <template v-slot:text>
+                        <VideoPlayer :videoSrc="useURL().stream(vidID)"
+                            :videoPoster="useURL().thumbnail(vidData?.Media.Sprite || vidData?.Media.Thumbnail || '')"
+                            :videoTitle="vidData?.Media.FileName"
+                            :videoVtt="useURL().thumbnail(vidData?.Media.Vtt || '')" />
+                    </template>
+                    <template v-slot:actions>
+                        <v-row justify="space-between" class="px-2">
+                            <v-col v-for="x in [vidData?.Next, vidData?.Back]" col="6" lg="4">
+                                <template v-if="x?.ID">
+                                    <NuxtLink :to="{ name: 'watch', query: { q: x.ID } }" class="text-decoration-none"
+                                        replace>
+                                        <media-image :img-src="useURL().thumbnail(x.Thumbnail)" :title="x.FileName"
+                                            @click="" />
+                                        <div
+                                            class="text-caption text-grey-darken-2 overflow-hidden text-no-wrap w-100 d-flex justify-space-between">
+                                            <div>{{ useDuration(x.Duration) }}</div>
+                                            <div>{{ useHRSize(x.FileSize) }}</div>
+                                        </div>
+                                    </NuxtLink>
+                                </template>
+                            </v-col>
+                        </v-row>
+                    </template>
+                </v-card>
             </v-col>
         </v-row>
     </v-container>
@@ -39,7 +43,8 @@ import type { MediaInfoType } from '~/types';
 definePageMeta({
     auth: {
         auth: false, unauthenticatedOnly: false,
-    }
+    },
+    layout: 'dark'
 })
 
 // ...
