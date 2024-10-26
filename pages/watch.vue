@@ -3,7 +3,10 @@
         <v-row justify="center">
             <v-col style="max-width: 95vw; width: 100%;" lg="5" class="px-0">
                 <v-card class="overflow-hidden" :key="vidData?.Media.ID" :disabled="pageState.disabled">
-                    <template v-slot:title>
+                    <template v-slot:prepend>
+                        <v-btn size="small" href="/random" :icon="'mdi-dice-6'" color="primary" variant="tonal" />
+                    </template>
+                    <template v-slot:title class="ma-2">
                         <span class="text-subtitle-1 text-md-h6 font-weight-medium">{{ vidData?.Media.FileName }}</span>
                     </template>
                     <template v-slot:append>

@@ -6,6 +6,7 @@
                 <v-btn @click="pageState.showThumb = !pageState.showThumb" icon>
                     <v-icon>{{ pageState.showThumb ? 'mdi-eye' : 'mdi-eye-off' }}</v-icon>
                 </v-btn>
+                <v-btn href="/random" target="_blank" :icon="'mdi-dice-6'" />
             </v-toolbar>
             <v-container fluid>
                 <v-row dense>
