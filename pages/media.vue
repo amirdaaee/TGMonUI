@@ -10,9 +10,9 @@
             </v-toolbar>
             <v-container fluid>
                 <v-row dense>
-                    <v-col v-for="med, n in mediaList?.Media" :key="n" :cols="12" :sm="6" :lg="4">
+                    <v-col v-for="med, n in mediaList?.media" :key="n" :cols="12" :sm="6" :lg="4">
                         <media-card :media="med" :show-image="pageState.showThumb" :selectable="true" :dlable="true"
-                            v-model:selected="pageState.selection[med.ID]" :has-job="hasJobComputed[med.ID]" />
+                            v-model:selected="pageState.selection[med.iD!]" :has-job="hasJobComputed[med.iD!]" />
                     </v-col>
                 </v-row>
             </v-container>
@@ -31,13 +31,14 @@
         </v-speed-dial>\
         <v-snackbar v-model="pageState.showSnackbar" :timeout="2000" :color="pageState.snackbarColor">{{
             pageState.snackbarText
-        }}</v-snackbar>
+            }}</v-snackbar>
     </v-main>
 </template>
 
 <script setup lang="ts">
 import { useRouter } from 'vue-router';
-import type { JobListType, MediaListType, MediaType } from '~/types';
+import { JobReqApi, MediaApi } from '~/gen/client';
+import type { TypesMediaFileDoc } from '~/gen/client/models/TypesMediaFileDoc';
 const router = useRouter()
 // ...
 interface PageState {
@@ -66,13 +67,17 @@ const pageState = reactive<PageState>({
 
 })
 const totalPages = computed(() => {
-    return mediaList.value ? Math.ceil(mediaList.value.Total / pageSize) : 1
+    return mediaList.value ? Math.ceil((mediaList.value.total ?? 0) / pageSize) : 1
 })
 const mediaQuery = computed(() => {
     return { "page": pageState.currentPage, "page_size": pageSize }
 })
-const { data: mediaList, refresh: mediaListRef, status: mediaListStat } = await useAPI<MediaListType>(useRuntimeConfig().public.baseApi + '/media/', { query: mediaQuery })
-const { data: jobList, refresh: jobListRef, status: jobListStat } = await useAPI<JobListType>(useRuntimeConfig().public.baseApi + '/job', {})
+const mediaClient = new MediaApi(useClientConfig())
+const jobReqClient = new JobReqApi(useClientConfig())
+
+
+const { data: mediaList, refresh: mediaListRef, status: mediaListStat } = await useAsyncData(() => mediaClient.apiMediaGet({ page: mediaQuery.value.page - 1 }), { watch: [mediaQuery] })
+const { data: jobList, refresh: jobListRef, status: jobListStat } = await useAsyncData(() => jobReqClient.apiJobReqGet({}))
 // ...
 watch(() => pageState.currentPage, (newValue) => {
     router.push({ query: { page: newValue } })
@@ -92,22 +97,21 @@ const isAnySelected = computed(() => {
     return false
 })
 const selectedItemComputed = computed(() => {
-    let i = <Array<MediaType>>[]
-    mediaList.value?.Media.forEach(function (v) {
-        if (pageState.selection[v.ID]) {
+    let i = <Array<TypesMediaFileDoc>>[]
+    mediaList.value?.media?.forEach(function (v) {
+        if (pageState.selection[v.iD!]) {
             i.push(v)
         }
     })
     return i
 })
 const hasJobComputed = computed(() => {
-    console.log(jobList.value)
     let res: Record<string, boolean> = {}
     if (!jobList.value) {
         return res
     }
-    for (let index = 0; index < jobList.value.Job.length; index++) {
-        res[jobList.value.Job[index].mediaID] = true
+    for (let index = 0; index < jobList.value.length; index++) {
+        res[jobList.value[index].mediaID!] = true
     }
     console.log(jobList.value)
     return res
@@ -122,7 +126,8 @@ async function deleteMedia() {
     pageState.isLoading = true
     let prmsList = <Array<Promise<any>>>[]
     selectedItemComputed.value.forEach(function (v) {
-        prmsList.push(useAPI(useRuntimeConfig().public.baseApi + '/media/' + v.ID, { method: "DELETE" }))
+        mediaClient.apiMediaIdDelete
+        prmsList.push(mediaClient.apiMediaIdDelete({ id: v.iD! }))
     })
     await Promise.all(prmsList)
     await mediaListRef()
@@ -131,20 +136,12 @@ async function deleteMedia() {
 }
 async function createThumbnail() {
     pageState.isLoading = true
-    let idList = <Array<string>>[]
+    let prmsList = <Array<Promise<any>>>[]
     selectedItemComputed.value.forEach(function (v) {
-        idList.push(v.ID)
+        prmsList.push(jobReqClient.apiJobReqPost({ data: { mediaID: v.iD!, type: "THUMBNAIL" } }))
     })
-    let jobs: any[] = []
-    idList.forEach((x) => {
-        jobs.push({
-            "mediaID": x,
-            "type": "THUMBNAIL"
-        })
-    })
-    let res = await useAPI(useRuntimeConfig().public.baseApi + '/job/', { method: "POST", body: { "job": jobs } })
-
-    if (res.error.value != null) {
+    let res = await Promise.allSettled(prmsList)
+    if (res.some((x) => x.status == "rejected")) {
         snack("error sending request", "red")
     } else {
         snack("request sent", "green")

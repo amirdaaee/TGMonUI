@@ -1,10 +1,10 @@
 <script setup lang="ts">
 import { useDisplay } from 'vuetify';
-import type { MediaType } from '~/types';
+import type { TypesMediaFileDoc } from '~/gen/client/models/TypesMediaFileDoc';
 
 const { mdAndDown } = useDisplay()
 const props = withDefaults(defineProps<{
-  media: MediaType,
+  media: TypesMediaFileDoc,
   showImage?: boolean
   selectable?: boolean,
   dlable?: boolean,
@@ -17,11 +17,11 @@ const props = withDefaults(defineProps<{
 const isSelected = defineModel<boolean>("selected")
 const showOverlay = ref<boolean>(false)
 // ...
-function getThumbPath(mediaID: string) {
-  if (props.showImage) {
+function getThumbPath(mediaID: string | undefined) {
+  if (props.showImage && mediaID) {
     return useURL().thumbnail(mediaID)
   }
-  return "https://davooda.com/images/basic/basic-gallery-photos-pictures-icon.svg"
+  return "https://upload.wikimedia.org/wikipedia/commons/thumb/6/65/No-Image-Placeholder.svg/330px-No-Image-Placeholder.svg.png"
 }
 function getStreamPath(mediaID: string) {
   return useURL().stream(mediaID)
@@ -55,19 +55,20 @@ function showVTT() {
 
 <template>
   <v-card :color="isSelected ? 'blue-grey-lighten-4' : ''">
-    <media-image :img-src="getThumbPath(props.media.Thumbnail)" :title="props.media.FileName" @click="showVTT" />
+    <media-image :img-src="getThumbPath(props.media.thumbnail)" :title="props.media.meta?.fileName ?? ''"
+      @click="showVTT" />
     <v-card-subtitle class="text-grey-darken-4 d-flex">
-      {{ useDuration(props.media.Duration) }}
+      {{ useDuration(props.media.meta?.duration ?? 0) }}
       <v-icon v-if="hasJob" icon="mdi-cog" size="small" class="ml-1" color="light-blue-darken-4"></v-icon>
-      <v-icon v-if="media.Sprite != ''" icon="mdi-filmstrip-box-multiple" size="small" class="ml-1"
+      <v-icon v-if="media.sprite" icon="mdi-filmstrip-box-multiple" size="small" class="ml-1"
         color="light-blue-darken-4"></v-icon>
       <v-spacer></v-spacer>
-      {{ useHRSize(props.media.FileSize) }}
+      {{ useHRSize(props.media.meta?.fileSize ?? 0) }}
     </v-card-subtitle>
     <v-card-actions>
-      <a v-if="props.dlable" :href="getDlPath(props.media.ID)"><v-btn density="compact" color="medium-emphasis"
+      <a v-if="props.dlable" :href="getDlPath(props.media.iD!)"><v-btn density="compact" color="medium-emphasis"
           icon="mdi-download"></v-btn></a>
-      <a :href="useURL().watch(props.media.ID)" target="_blank"><v-btn density="compact" color="medium-emphasis"
+      <a :href="useURL().watch(props.media.iD!)" target="_blank"><v-btn density="compact" color="medium-emphasis"
           icon="mdi-play-circle"></v-btn></a>
 
       <v-menu scroll-strategy="close" v-if="props.intentable">
@@ -75,10 +76,10 @@ function showVTT() {
           <v-btn density="compact" color="medium-emphasis" icon="mdi-play-network" v-bind="props"></v-btn>
         </template>
         <v-list>
-          <v-list-item :href="getKMPath(props.media.ID, props.media.FileName)">
+          <v-list-item :href="getKMPath(props.media.iD!, props.media.meta?.fileName!)">
             <v-list-item-title v-text="'KM player'" />
           </v-list-item>
-          <v-list-item :href="getMXPath(props.media.ID, props.media.FileName)">
+          <v-list-item :href="getMXPath(props.media.iD!, props.media.meta?.fileName!)">
             <v-list-item-title v-text="'MX player'" />
           </v-list-item>
         </v-list>
@@ -89,7 +90,7 @@ function showVTT() {
         :icon="isSelected ? 'mdi-radiobox-marked' : 'mdi-radiobox-blank'"></v-btn>
     </v-card-actions>
     <v-overlay v-model="showOverlay" class="align-center justify-center w-100" opacity="0.8" close-on-content-click>
-      <v-img :src="props.media.Sprite ? getThumbPath(props.media.Sprite) : getThumbPath(props.media.Thumbnail)"
+      <v-img :src="props.media.sprite ? getThumbPath(props.media.sprite) : getThumbPath(props.media.thumbnail)"
         :width="mdAndDown ? '100vw' : '40vw'" />
     </v-overlay>
   </v-card>

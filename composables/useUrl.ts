@@ -4,7 +4,7 @@ export function useURL() {
             return `${useRuntimeConfig().public.baseThumb}/${thumbID}`
         },
         "stream": function (mediaID: string) {
-            return useRuntimeConfig().public.baseStream + "/" + mediaID
+            return `${useRuntimeConfig().public.baseStream}/${mediaID}/`
         },
         "media": function (mediaID: string) {
             return useRuntimeConfig().public.baseApi + "/media/" + mediaID

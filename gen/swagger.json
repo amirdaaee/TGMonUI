@@ -1,0 +1,528 @@
+{
+    "swagger": "2.0",
+    "info": {
+        "title": "TGMon API",
+        "contact": {},
+        "version": "1.0"
+    },
+    "paths": {
+        "/api/auth/login/": {
+            "post": {
+                "description": "Authenticate user and return a token",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "summary": "Login",
+                "parameters": [
+                    {
+                        "description": "Login Data",
+                        "name": "data",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/web.LoginPostReqType"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/web.LoginPostResType"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/auth/session/": {
+            "get": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "summary": "Session data",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/web.LoginPostResType"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/info/": {
+            "get": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "summary": "Info summary",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/web.InfoGetResType"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/jobReq/": {
+            "get": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "jobReq"
+                ],
+                "summary": "List job requests",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/types.JobReqDoc"
+                            }
+                        }
+                    }
+                }
+            },
+            "post": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "jobReq"
+                ],
+                "summary": "Create job request",
+                "parameters": [
+                    {
+                        "description": "Job Request Data",
+                        "name": "data",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/types.JobReqDoc"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/types.JobReqDoc"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/jobReq/{id}/": {
+            "delete": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "jobReq"
+                ],
+                "summary": "Delete job request",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Job Request ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/jobRes/": {
+            "post": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "jobRes"
+                ],
+                "summary": "Create job response",
+                "parameters": [
+                    {
+                        "description": "Job Response Data",
+                        "name": "data",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/types.JobResDoc"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/types.JobResDoc"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/media/": {
+            "get": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "media"
+                ],
+                "summary": "List media",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "page",
+                        "name": "page",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/web.MediaListResType"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/media/random/": {
+            "get": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "summary": "Get random media",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/web.RandomMediaGetResType"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/media/{id}/": {
+            "get": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "media"
+                ],
+                "summary": "Read media",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Media ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/web.MediaReadResType"
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "media"
+                ],
+                "summary": "Delete media",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Media ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK"
+                    }
+                }
+            }
+        }
+    },
+    "definitions": {
+        "types.JobReqDoc": {
+            "type": "object",
+            "properties": {
+                "CreatedAt": {
+                    "type": "string"
+                },
+                "DeletedAt": {
+                    "type": "string"
+                },
+                "ID": {
+                    "type": "string"
+                },
+                "MediaID": {
+                    "type": "string"
+                },
+                "Type": {
+                    "$ref": "#/definitions/types.JobTypeEnum"
+                },
+                "UpdatedAt": {
+                    "type": "string"
+                }
+            }
+        },
+        "types.JobResDoc": {
+            "type": "object",
+            "properties": {
+                "CreatedAt": {
+                    "type": "string"
+                },
+                "DeletedAt": {
+                    "type": "string"
+                },
+                "ID": {
+                    "type": "string"
+                },
+                "JobReqID": {
+                    "type": "string"
+                },
+                "Sprite": {
+                    "type": "array",
+                    "items": {
+                        "type": "integer"
+                    }
+                },
+                "Thumbnail": {
+                    "type": "array",
+                    "items": {
+                        "type": "integer"
+                    }
+                },
+                "UpdatedAt": {
+                    "type": "string"
+                },
+                "Vtt": {
+                    "type": "array",
+                    "items": {
+                        "type": "integer"
+                    }
+                }
+            }
+        },
+        "types.JobTypeEnum": {
+            "type": "string",
+            "enum": [
+                "THUMBNAIL",
+                "SPRITE"
+            ],
+            "x-enum-varnames": [
+                "THUMBNAILJobType",
+                "SPRITEJobType"
+            ]
+        },
+        "types.MediaFileDoc": {
+            "type": "object",
+            "properties": {
+                "CreatedAt": {
+                    "type": "string"
+                },
+                "DeletedAt": {
+                    "type": "string"
+                },
+                "ID": {
+                    "type": "string"
+                },
+                "MessageID": {
+                    "type": "integer"
+                },
+                "Meta": {
+                    "$ref": "#/definitions/types.MediaFileMeta"
+                },
+                "Sprite": {
+                    "type": "string"
+                },
+                "Thumbnail": {
+                    "type": "string"
+                },
+                "UpdatedAt": {
+                    "type": "string"
+                },
+                "Vtt": {
+                    "type": "string"
+                }
+            }
+        },
+        "types.MediaFileMeta": {
+            "type": "object",
+            "properties": {
+                "Duration": {
+                    "type": "number"
+                },
+                "FileID": {
+                    "type": "integer"
+                },
+                "FileName": {
+                    "type": "string"
+                },
+                "FileSize": {
+                    "type": "integer"
+                },
+                "MimeType": {
+                    "type": "string"
+                }
+            }
+        },
+        "web.InfoGetResType": {
+            "type": "object",
+            "properties": {
+                "MediaCount": {
+                    "type": "integer"
+                }
+            }
+        },
+        "web.LoginPostReqType": {
+            "type": "object",
+            "required": [
+                "Password",
+                "Username"
+            ],
+            "properties": {
+                "Password": {
+                    "type": "string"
+                },
+                "Username": {
+                    "type": "string"
+                }
+            }
+        },
+        "web.LoginPostResType": {
+            "type": "object",
+            "properties": {
+                "Token": {
+                    "type": "string"
+                }
+            }
+        },
+        "web.MediaListResType": {
+            "type": "object",
+            "properties": {
+                "Media": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/types.MediaFileDoc"
+                    }
+                },
+                "Total": {
+                    "type": "integer"
+                }
+            }
+        },
+        "web.MediaReadResType": {
+            "type": "object",
+            "properties": {
+                "Media": {
+                    "$ref": "#/definitions/types.MediaFileDoc"
+                },
+                "nextID": {
+                    "type": "string"
+                },
+                "pervID": {
+                    "type": "string"
+                }
+            }
+        },
+        "web.RandomMediaGetResType": {
+            "type": "object",
+            "properties": {
+                "MediaID": {
+                    "type": "string"
+                }
+            }
+        }
+    },
+    "securityDefinitions": {
+        "ApiKeyAuth": {
+            "type": "apiKey",
+            "name": "Authorization",
+            "in": "header"
+        }
+    }
+}

@@ -2,23 +2,18 @@ import vuetify, { transformAssetUrls } from 'vite-plugin-vuetify'
 
 // https://nuxt.com/docs/api/configuration/nuxt-config
 export default defineNuxtConfig({
-  $development: {
-    routeRules: {
-      [process.env.NUXT_PUBLIC_BASE_API + "/**" || ""]: { proxy: { to: process.env.BASE_API_PROXY + "/**", fetchOptions: { cache: "force-cache" } } },
-      [process.env.NUXT_PUBLIC_BASE_STREAM + "/**" || ""]: { proxy: process.env.BASE_STREAM_PROXY + "/**" },
-      [process.env.NUXT_PUBLIC_BASE_THUMB + "/**" || ""]: { proxy: process.env.BASE_THUMB_PROXY + "/**" },
-    }
-  },
   ssr: false,
   devtools: { enabled: true },
   typescript: {
     typeCheck: false
   },
+
   //...
   build: {
     transpile: ['vuetify'],
   },
   modules: [
+    '@vueuse/nuxt',
     "@sidebase/nuxt-auth",
     (_options, nuxt) => {
       nuxt.hooks.hook('vite:extendConfig', (config) => {
@@ -40,22 +35,28 @@ export default defineNuxtConfig({
   auth: {
     isEnabled: true,
     globalAppMiddleware: true,
+    disableInternalRouting: true,
     disableServerSideAuth: false,
+    baseURL: process.env.AUTH_ORIGIN,
     provider: {
       type: "local",
       token: {
-        maxAgeInSeconds: 365 * 24 * 60 * 60
-      }
+        maxAgeInSeconds: 365 * 24 * 60 * 60,
+        signInResponseTokenPointer: "/Token"
+      },
+      endpoints: {
+        signIn: { path: "/login/" },
+        getSession: { path: "/session/" }
+      },
     },
   },
   // ...
   runtimeConfig: {
     public: {
       baseApi: '/api',
+      baseThumb: '/thumb',
       baseStream: '/stream',
-      baseThumb: '/tgmon-thumb',
     },
-    baseAuth: ''
   },
   // ...
 })

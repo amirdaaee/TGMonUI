@@ -1,14 +1,14 @@
 <template></template>
 
 <script setup lang="ts">
-import type { MediaType } from '~/types';
+import { DefaultApi } from '~/gen/client';
 const router = useRouter()
-
-const { data } = await useAPI<MediaType>(useRuntimeConfig().public.baseApi + '/media/rand', {})
+const mediaClient = new DefaultApi(useClientConfig())
+const randomRes = await mediaClient.apiMediaRandomGet()
 navigateTo({
     path: '/watch',
     query: {
-        q: data.value?.ID,
+        q: randomRes?.mediaID,
     }
 })
 </script>

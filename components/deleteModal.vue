@@ -1,10 +1,10 @@
 <script setup lang="ts">
-import type { MediaType } from '~/types';
+import type { TypesMediaFileDoc } from '~/gen/client/models/TypesMediaFileDoc';
 
 const display = defineModel("display", { default: false });
 const props = defineProps({
   items: {
-    type: Array<MediaType>,
+    type: Array<TypesMediaFileDoc>,
     default: []
   }
 })
@@ -17,12 +17,12 @@ defineEmits(['confirm'])
       <v-card-text>
         <ul>
           <li v-for="itm in items">
-            <span class="text-body-1">{{ itm.FileName }}</span>
+            <span class="text-body-1">{{ itm.meta?.fileName }}</span>
             <v-chip density="comfortable" size="small" color="deep-purple-darken-1" class="ml-1">
-              {{ useDuration(itm.Duration) }}
+              {{ useDuration(itm.meta?.duration ?? 0) }}
             </v-chip>
             <v-chip density="comfortable" size="small" color="deep-purple-darken-1" class="ml-1">
-              {{ useHRSize(itm.FileSize) }}
+              {{ useHRSize(itm.meta?.fileSize ?? 0) }}
             </v-chip>
           </li>
         </ul>
