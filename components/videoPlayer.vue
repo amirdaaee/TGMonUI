@@ -21,7 +21,7 @@ onMounted(() => {
   player = new Plyr('video', {
     previewThumbnails: { src: props.videoVtt, enabled: props.videoVtt ? true : false },
     debug: true,
-    controls: ['rewind', 'fast-forward', 'play-large', 'progress', 'current-time', 'duration'],
+    controls: ['rewind', 'play-large', 'progress', 'current-time', 'duration', 'fast-forward'],
     ratio: "16:9",
 
   });
